@@ -45,7 +45,7 @@ model.summary()
 
 
 model.compile(loss='sparse_categorical_crossentropy',optimizer=tf.optimizers.SGD(learning_rate=0.001),metrics=['accuracy'])
-history=model.fit(x_train, y_train ,epochs=40,validation_data=(x_test, y_test))
+history=model.fit(x_train, y_train ,epochs=2,validation_data=(x_test, y_test))
 
 
 fig, axs = plt.subplots(2, 1, figsize=(15,15))

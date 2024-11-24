@@ -20,7 +20,7 @@ namespace {
 extern "C" void tflm_init(const uint8_t* model_data) {
     model = ::tflite::GetModel(model_data);
 
-    static tflite::MicroMutableOpResolver<7> micro_op_resolver;
+    static tflite::MicroMutableOpResolver<9> micro_op_resolver;
 
     micro_op_resolver.AddConv2D();
     micro_op_resolver.AddMaxPool2D();
@@ -28,6 +28,8 @@ extern "C" void tflm_init(const uint8_t* model_data) {
     micro_op_resolver.AddResizeBilinear();
     micro_op_resolver.AddRelu();
     micro_op_resolver.AddSoftmax();
+    micro_op_resolver.AddMul();
+    micro_op_resolver.AddAdd();
     micro_op_resolver.AddReshape();
 
     static tflite::MicroInterpreter static_interpreter(model, micro_op_resolver, tensor_arena, kTensorArenaSize);

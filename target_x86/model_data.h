@@ -1,4 +1,4 @@
 //#include <cstdint>
 
-const unsigned int lenet_model_tflite_len = 251388;
-extern const unsigned char lenet_model_tflite[];
+extern unsigned int alexnet_model_tflite_len;
+extern const unsigned char alexnet_model_tflite[];
