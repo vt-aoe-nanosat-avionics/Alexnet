@@ -8,4 +8,5 @@ cifarData
 *.d
 *.elf
 *.bin
+*.hex
 *.out
