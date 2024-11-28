@@ -24,6 +24,12 @@ import glob   # file path autocompletion
 import readline # file path autocompletion
 import colorama # color
 import signal # signal handling
+import re
+import struct
+os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
+from tensorflow.keras import datasets
+import tensorflow as tf
+import matplotlib.pyplot as plt
 
 # Make Python TAB implementation visible
 sys.path.append(os.path.dirname(os.path.abspath(__file__))+'/python-implementation')
@@ -31,6 +37,9 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__))+'/python-implementati
 # import TAB support
 from tab import *
 
+################################################################################
+def ints_to_bytes(ints):
+  return bytes(ints)
 ################################################################################
 
 # initialize script arguments
@@ -61,6 +70,7 @@ class tabCommands(Cmd):
     super().__init__()
     colorama.init()
     # Create serial object
+    
     try:
       self.serial_port = serial.Serial(port=dev,baudrate=921600)
     except:
@@ -750,6 +760,45 @@ class tabCommands(Cmd):
         verbose = False
         break
 
+  def do_app_infer(self, line):
+    """    
+    """
+    rx_cmd_buff = RxCmdBuff()
+    opts = line.split(' ')
+
+    verbose = True
+    for x in opts:
+      if x == '-v':
+        verbose = False
+        break
+      
+    cmd = TxCmd(APP_INFER_OPCODE, HWID, self.msgid, GND, CDH)
+    byte_i = 0
+    while rx_cmd_buff.state != RxCmdBuffState.COMPLETE:
+      if byte_i < cmd.get_byte_count():
+        self.serial_port.write(cmd.data[byte_i].to_bytes(1, byteorder='big'))
+        byte_i += 1
+      if self.serial_port.in_waiting>0:
+        bytes = self.serial_port.read(1)
+        for b in bytes:
+          rx_cmd_buff.append_byte(b)
+    
+    if verbose == True:
+      print('txcmd: '+str(cmd))
+      print('reply: '+str(rx_cmd_buff)+'\n')
+
+    test = rx_cmd_buff.data[PLD_START_INDEX:PLD_START_INDEX+40]
+    test2 = ints_to_bytes(test)
+    confidence = []
+    for x in range(0,10):
+      temp = test2[x*4:(x*4)+4]
+      confidence.append(f"{round(struct.unpack('<f', temp)[0],6):.6f}")
+      print(str(x) + ": " + confidence[x])
+
+
+    self.msgid += 1
+    
+
 
 
 
@@ -932,16 +981,91 @@ class tabCommands(Cmd):
     file.write(bytearray(file_data))
     file.close()
 
-  def do_test_files(self, line):
+  def do_cnn_write_model(self, line):
     """    This function tests the write and read file functions
     """
-    for i in range(0,10):
-      print(i+1)
-      self.do_erase_sectors('0x00001000 1150 -v')
-      time.sleep(10)
-      self.do_write_file('video.mp4 0x00001000 -v')
-      input = '0x00001000 readFiles/video'+str(i)+' -v'
-      self.do_read_file(input)
+    rx_cmd_buff = RxCmdBuff()
+    opts = line.split(' ')
+
+    verbose = True
+    for x in opts:
+      if x == '-v':
+        verbose = False
+        break
+    #try:
+    #  address = int(opts[0],16)
+    #except:
+    #  print('ERROR: "' + opts[0] + '" is an invalid address')
+    #  return
+    
+    filename = opts[0]
+    #os.system('xxd -i ' + filename + ' > temp.cc')
+    #file = open('temp.cc', 'r')
+    file = open(filename, 'r')
+    file_data = file.read()
+    file.close()
+    #os.system('rm temp.cc')
+    file_data = ''.join(file_data.split())
+    file_data = re.split(',|{|}', file_data)
+    for x in file_data:
+      try:
+        x = int(x, 16)
+      except:
+        file_data.remove(x)
+    file_data = bytes([int(x,0) for x in file_data])
+    
+    with open('temp', 'wb') as f:
+      f.write(file_data)
+
+    filesize = os.path.getsize('temp')
+    if filesize > 0x00FFFFFF:
+      print('ERROR: Model is too large')
+      return
+    options = '0x00001000 ' + str(math.ceil(filesize/4096))
+    self.do_erase_sectors(options)
+    self.do_write_file('temp 0x00001000')
+
+    os.system('rm temp')
+
+  def complete_cnn_write_model(self, text, line, start_index, end_index):
+    opts = line.split(' ')[1:]
+    if text and len(opts) == 1: # if I already started typing the option, filter the existing options
+        path = text
+        if os.path.isdir(path):
+          return glob.glob(os.path.join(path, '*'))
+        else:
+          return glob.glob(path+'*')
+    else:
+        return self.write_file_options
+    
+  def do_cnn_write_cifar(self, line):
+    """    This function tests the write and read file functions
+    """
+    opts = line.split(' ')
+    try:
+      file = int(opts[0])
+    except:
+      file = 0
+
+    (x_train,y_train),(x_test,y_test) = datasets.cifar10.load_data()
+
+    data = []
+
+    for i in range(32):
+        for j in range(32):
+            for k in range(3):
+                data.append(int(x_test[file][i][j][k]))
+
+    with open('cifarData', 'wb') as f:
+      f.write(bytearray(data))
+
+    #print(y_test[file])
+    fig = plt.figure()
+    plt.imshow(x_test[file], cmap='gray')
+    plt.show(block=False)
+
+    self.do_erase_sectors('0x00000000 1')
+    self.do_write_file('cifarData 0x00000000')
 
 
 
