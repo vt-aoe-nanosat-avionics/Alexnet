@@ -12,7 +12,7 @@ namespace {
   TfLiteTensor* input = nullptr;
   TfLiteTensor* output = nullptr;
 
-  constexpr int kTensorArenaSize = 41 * 1024; //  10 KB
+  constexpr int kTensorArenaSize = 159 * 1024; //  100 KB
   __attribute__((aligned(16))) uint8_t tensor_arena[kTensorArenaSize];
 }  // namespace
 
@@ -20,15 +20,17 @@ namespace {
 extern "C" void tflm_init(const uint8_t* model_data) {
     model = ::tflite::GetModel(model_data);
 
-    static tflite::MicroMutableOpResolver<7> micro_op_resolver;
+    static tflite::MicroMutableOpResolver<9> micro_op_resolver;
 
     micro_op_resolver.AddConv2D();
-    micro_op_resolver.AddAveragePool2D();
+    micro_op_resolver.AddMaxPool2D();
     micro_op_resolver.AddFullyConnected();
-    micro_op_resolver.AddReshape();
+    micro_op_resolver.AddResizeBilinear();
+    micro_op_resolver.AddRelu();
     micro_op_resolver.AddSoftmax();
-    micro_op_resolver.AddTanh();
-    micro_op_resolver.AddLogistic();
+    micro_op_resolver.AddMul();
+    micro_op_resolver.AddAdd();
+    micro_op_resolver.AddReshape();
 
     static tflite::MicroInterpreter static_interpreter(model, micro_op_resolver, tensor_arena, kTensorArenaSize);
     interpreter = &static_interpreter;
@@ -42,7 +44,7 @@ extern "C" float* tflm_get_input_buffer(int index) {
     return input ? input->data.f : nullptr;
 }
 
-extern "C" const float* tflm_get_output_buffer(int index) {
+extern "C" float* tflm_get_output_buffer(int index) {
     if (!interpreter) return nullptr;
     output = interpreter->output(index);
     return output ? output->data.f : nullptr;
