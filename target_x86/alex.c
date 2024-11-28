@@ -40,7 +40,7 @@
 //};
 
 void run_alex_cnn(void);
-unsigned int alexnet_model_tflite_len = 11660504;
+//unsigned int alexnet_model_tflite_len = 11660504;
 
 int main(void) {
     //rcc_periph_reset_pulse(RST_USART1);
