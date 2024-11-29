@@ -789,11 +789,12 @@ class tabCommands(Cmd):
 
     test = rx_cmd_buff.data[PLD_START_INDEX:PLD_START_INDEX+40]
     test2 = ints_to_bytes(test)
+    categories = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
     confidence = []
     for x in range(0,10):
       temp = test2[x*4:(x*4)+4]
       confidence.append(f"{round(struct.unpack('<f', temp)[0],6):.6f}")
-      print(str(x) + ": " + confidence[x])
+      print(categories[x] + ":\t" + confidence[x])
 
 
     self.msgid += 1
