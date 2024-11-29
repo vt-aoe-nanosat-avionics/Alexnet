@@ -1,9 +1,12 @@
-PROJECT = alexnet
+PROJECT = flight_cnn_blr
 BUILD_DIR = build
 
-CFILES = target_m4/alex.c
+TA_EXPT_DIR = ./target_m4/ta-expt
+CFILES = target_m4/flight_cnn_blr.c
+CFILES += target_m4/alexnet.c
+CFILES += bootloader.c taolst_protocol.c
+
 CCFILES = target_m4/tflm_wrapper.cc
-#CCFILES += target_x86/model_data.cc
 
 # Edit these two lines as needed
 DEVICE=stm32l496rgt3
