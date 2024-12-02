@@ -29,7 +29,7 @@ import struct
 os.environ["CUDA_VISIBLE_DEVICES"] = "-1"
 from tensorflow.keras import datasets
 import tensorflow as tf
-import matplotlib.pyplot as plt
+from matplotlib import pyplot as plt
 
 # Make Python TAB implementation visible
 sys.path.append(os.path.dirname(os.path.abspath(__file__))+'/python-implementation')
@@ -1049,6 +1049,7 @@ class tabCommands(Cmd):
       file = 0
 
     (x_train,y_train),(x_test,y_test) = datasets.cifar10.load_data()
+    y_test = y_test.reshape(-1,)
 
     data = []
 
@@ -1060,10 +1061,11 @@ class tabCommands(Cmd):
     with open('cifarData', 'wb') as f:
       f.write(bytearray(data))
 
-    #print(y_test[file])
-    fig = plt.figure()
-    plt.imshow(x_test[file], cmap='gray')
-    plt.show(block=False)
+    labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
+
+    #plt.imshow(x_test[file])
+    #plt.title(labels[y_test[file]])
+    #plt.show()#block=False)
 
     self.do_erase_sectors('0x00000000 1')
     self.do_write_file('cifarData 0x00000000')

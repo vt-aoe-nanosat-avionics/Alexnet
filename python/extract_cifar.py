@@ -25,6 +25,7 @@ for i in range(32):
 with open('cifarData', 'wb') as f:
   f.write(bytearray(data))
 
+fig = plt.figure()
 plt.imshow(x_test[file])
 plt.title(labels[y_test[file]])
 plt.show()

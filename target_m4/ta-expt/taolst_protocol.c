@@ -26,7 +26,7 @@
 #include <bootloader.h>             // Bootloader macros
 #include <taolst_protocol.h>        // Header file
 #include <IS25LP128F.h>              // IS25LP128F flash memory macros
-#include <../alexnet.h>                   // Alexnet CNN macros
+#include <alexnet.h>                   // Alexnet CNN macros
 
 // Variables
 extern int in_bootloader;    // Used in bootloader main to indicate MCU state

@@ -15,6 +15,7 @@ OOCD_FILE = board/stm32l4-generic.cfg
 # All lines below probably should not be edited
 VPATH += $(TA_EXPT_DIR)
 INCLUDES += $(patsubst %,-I%, . $(TA_EXPT_DIR))
+INCLUDES += $(patsubst %,-I%, . ./target_m4)
 OPENCM3_DIR=libopencm3
 
 

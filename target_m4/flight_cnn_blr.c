@@ -17,7 +17,7 @@
 // ta-expt library
 #include <bootloader.h>      // microcontroller utility functions
 #include <taolst_protocol.h> // protocol utility functions
-#include <../alexnet.h>           // LeNet-5 CNN utility functions
+#include <alexnet.h>           // LeNet-5 CNN utility functions
 
 // Variables
 
