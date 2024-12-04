@@ -71,11 +71,11 @@ make
 
 # Loading Models
 
-The AlexNet model is loaded onto the off-chip flash on the board. The flash is only 16MB so any potential model to run on the MCU has to be smaller than 16MB. The model is loaded using a modified version of Tab Host. The modified version adds `cnn_write_model`, `cnn_write_cifar` and `app_infer`. The CNN functions are helper functions to assist in loading the model and changing the image data on the off-chip flash.
+The AlexNet model is loaded onto the off-chip flash on the board. The flash is only 16MB so any potential model to run on the MCU has to be smaller than 16MB. The model is loaded using a modified version of Tab Host. The modified version adds `cnn_write_model`, `cnn_write_cifar` and `app_infer`. The CNN functions are helper functions to assist in loading the model and changing the image data on the off-chip flash. The large size of this AlexNet model means that writing it to the off-chip flash can take a long time.
 
 - `cnn_write_model`
-    - **Description**: This function takes a C++ headerfile created using xxd and writes the byte array to the board's off-chip flash starting at 0x00001000. This function makes use of `common_erase` and `common_write` opcodes to write the model to the flash. The only arguement for this function is a relative path to the C++ file
-    - **Arguements**: Relative path to header file
+    - **Description**: This function takes a C++ headerfile created using xxd and writes the byte array to the board's off-chip flash starting at 0x00001000. This function makes use of `common_erase` and `common_write` opcodes to write the model to the flash. The only arguement for this function is a relative path to the C++ source file
+    - **Arguements**: Relative path to source file
     - **Example**:
 ```
 TAB> cnn_write_model target_x86/model_data.cc
@@ -89,4 +89,8 @@ TAB> cnn_write_model target_x86/model_data.cc
 ```
 TAB> cnn_write_cifar 100
 ```
+
+- `app_infer`
+    - **Description**: This command is what tells the microcontroller to start an inference on the image currently loaded in the off-chip flash. A single inference takes just over 10 seconds to complete. The `app_infer` command returns a `common_data` packet containing 40 bytes. These bytes make up the float values for each category; `tab_host` parses these bytes and prints a more readable output to the screen.
+    - **Arguements**: None
 
