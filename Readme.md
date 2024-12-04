@@ -68,29 +68,27 @@ arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -st
 make
 ```
 
-
 # Loading Models
 
-The AlexNet model is loaded onto the off-chip flash on the board. The flash is only 16MB so any potential model to run on the MCU has to be smaller than 16MB. The model is loaded using a modified version of Tab Host. The modified version adds `cnn_write_model`, `cnn_write_cifar` and `app_infer`. The CNN functions are helper functions to assist in loading the model and changing the image data on the off-chip flash. The large size of this AlexNet model means that writing it to the off-chip flash can take a long time.
+## Linux
 
-- `cnn_write_model`
-    - **Description**: This function takes a C++ headerfile created using xxd and writes the byte array to the board's off-chip flash starting at 0x00001000. This function makes use of `common_erase` and `common_write` opcodes to write the model to the flash. The only arguement for this function is a relative path to the C++ source file
-    - **Arguements**: Relative path to source file
-    - **Example**:
+A python script is provided to extract a CIFAR-10 image from the tensorflow dataset. This script extracts the image data and writes it bytewise to a file called cifarData. This file is read by the main c code and is used for the AlexNet inference.The script uses matplotlib to display the selected image
 ```
-TAB> cnn_write_model target_x86/model_data.cc
+python3 python/extract_cifar.py 1001
 ```
 
 
-- `cnn_write_cifar`
-    - **Description**: This function takes an image from the CIFAR-10 testing dataset and writes the bytes of the image to the off-chip flash starting at 0x00000000. `cnn_write_cifar` erases tehe first sector and then reads an image from tensorflow and writes in to the flash. The only argument for this function is the index of the CIFAR-10 image to load to the flash. The image is supposed to display using matplotlib, but that caused strange bugs to appear. The only way to see the image is to use `python3 python/extract_cifar.py [IMAGE]` using the same index and the image will appear.
-    - **Arguements**: Index of CIFAR-10 image
-    - **Example**:
-```
-TAB> cnn_write_cifar 100
-```
+## Cortex M4
 
-- `app_infer`
-    - **Description**: This command is what tells the microcontroller to start an inference on the image currently loaded in the off-chip flash. A single inference takes just over 10 seconds to complete. The `app_infer` command returns a `common_data` packet containing 40 bytes. These bytes make up the float values for each category; `tab_host` parses these bytes and prints a more readable output to the screen.
-    - **Arguements**: None
+The only method to load a model onto the off-chip flash for this demo version of AlexNet is to use different firmware and write the modal manually. This process is very specific, so the steps are below to ensure the model is loaded correctly.
+
+1. Erase off-chip flash
+Before the model can be written to the off-chip flash, it first needs to be erased of any previous data. The erase needs to start at 0x00001000 and be for enough sectors to hold the entire model. It should be 1150 sectors, but calclating this value may be necessary for modified models.
+
+2. Load the model
+The model is loaded starting at 0x00001004. This address is chosen because it is far enough from the start of the off-chip flash to allow erasing image data without effecting the model, while also giving the most space for the model. The address is 0x00001004 because the first 4 bytes starting at 0x00001000 when converted to a 32 bit integer contain the size of the model in bytes.
+
+The same process can be followed for loading the image data, but starting at 0x00000000 instead. Only the first sector should be erased for the image data. The same process as above can be used to extract the image data from the CIFAR-10 dataset, and then the cifarData file can be written to 0x00000004
+
+**If the model is corrupted, the MCU will hang when it trys to initialize the model at startup**
 
