@@ -54,14 +54,6 @@ make -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET
 cd ..
 ```
 
-
-## 3. Compile Tensorflow Wrapper
-
-```bash
-arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -std=c++17 -Wall -Wextra -fno-threadsafe-statics -Itflite-micro/. -Itflite-micro/tensorflow/lite/micro/tools/make/downloads -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/gemmlowp -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/flatbuffers/include -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/kissfft -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/ruy -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/cmsis/Cortex_DFP/Device/"ARMCM4"/Include -Itflite-micro/tensorflow/lite/micro -ltensorflow-microlite -c target_m4/tflm_wrapper.cc -o build/tflm_wrapper.o
-```
-
-
 ## 4. Compile and link main C code
 
 ```bash
@@ -71,7 +63,7 @@ make
 
 # Loading Models
 
-The AlexNet model is loaded onto the off-chip flash on the board. The flash is only 16MB so any potential model to run on the MCU has to be smaller than 16MB. The model is loaded using a modified version of Tab Host. The modified version adds `cnn_write_model`, `cnn_write_cifar` and `app_infer`. The CNN functions are helper functions to assist in loading the model and changing the image data on the off-chip flash. The large size of this AlexNet model means that writing it to the off-chip flash can take a long time.
+The AlexNet model is loaded onto the off-chip flash on the board. The flash is only 16MB so any potential model to run on the MCU has to be smaller than 16MB. The model is loaded using a modified version of Tab Host. The modified version adds `cnn_write_model`, `cnn_write_cifar` and `app_infer`. The CNN functions are helper functions to assist in loading the model and changing the image data on the off-chip flash. The large size of this AlexNet model means that writing it to the off-chip flash can take a long time. Tab_host can be started by using `./python/tab/tab_host /dev/ttyUSB0` from the AlexNet directory.
 
 - `cnn_write_model`
     - **Description**: This function takes a C++ headerfile created using xxd and writes the byte array to the board's off-chip flash starting at 0x00001000. This function makes use of `common_erase` and `common_write` opcodes to write the model to the flash. The only arguement for this function is a relative path to the C++ source file
