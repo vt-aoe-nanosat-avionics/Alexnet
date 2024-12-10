@@ -6,21 +6,36 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 import tensorflow as tf
 import matplotlib.pyplot as plt
 from tensorflow.keras import datasets, layers, models, losses
+import numpy as np
+import cv2
 
 (x_train,y_train),(x_test,y_test) = datasets.cifar10.load_data()
 y_test = y_test.reshape(-1,)
 y_train = y_train.reshape(-1,)
 
-#x_train = x_train / 255.0
-#x_test = x_test / 255.0
+
+# Augment the training data
+print("Augmenting training data...")
+
+x_flipped = np.array([np.array(tf.image.flip_left_right(image)) for image in x_train.copy()])
+x_cropped = np.array([cv2.resize(np.array(tf.image.central_crop(image, 0.7)), (32,32)) for image in x_train.copy()])
+x_flipped_cropped = np.array([cv2.resize(np.array(tf.image.central_crop(image, 0.7)), (32,32)) for image in x_flipped.copy()])
+
+print(x_train.shape, x_flipped.shape, x_cropped.shape, x_flipped_cropped.shape)
+
+x_train = np.concatenate((x_train, x_flipped, x_cropped, x_flipped_cropped))
+y_train = np.concatenate((y_train, y_train, y_train, y_train))
+
+
+
 
 classes = ['Airplane', 'Automobile', 'Bird', 'Cat', 'Deer', 'Dog', 'Frog', 'Horse', 'Ship', 'Truck']
 
 
-for i in range(0,9):
-    plt.subplot(330+1+i)
-    plt.imshow(x_train[i])
-plt.show() 
+# for i in range(0,9):
+#     plt.subplot(330+1+i)
+#     plt.imshow(x_train[i])
+# plt.show() 
 
 print(x_train.shape)
 
@@ -44,8 +59,8 @@ model.compile(optimizer='SGD', loss=losses.sparse_categorical_crossentropy, metr
 model.summary()
 
 
-model.compile(loss='sparse_categorical_crossentropy',optimizer=tf.optimizers.SGD(learning_rate=0.001),metrics=['accuracy'])
-history=model.fit(x_train, y_train ,epochs=2,validation_data=(x_test, y_test))
+model.compile(loss='sparse_categorical_crossentropy',optimizer=tf.optimizers.SGD(learning_rate=0.003),metrics=['accuracy'])
+history=model.fit(x_train, y_train ,epochs=4, batch_size=128, validation_data=(x_test, y_test))
 
 
 fig, axs = plt.subplots(2, 1, figsize=(15,15))
@@ -58,6 +73,6 @@ axs[1].plot(history.history['val_accuracy'])
 axs[1].title.set_text('Training Accuracy vs Validation Accuracy')
 axs[1].legend(['Train', 'Val'])
 
-#model.evaluate(x_test, y_test)
+model.evaluate(x_test, y_test)
 
 tf.keras.models.save_model(model, "models/model.keras")
