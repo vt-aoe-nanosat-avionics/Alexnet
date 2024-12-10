@@ -12,7 +12,7 @@ namespace {
   TfLiteTensor* input = nullptr;
   TfLiteTensor* output = nullptr;
 
-  constexpr int kTensorArenaSize = 159 * 1024; //  100 KB
+  constexpr int kTensorArenaSize = 159 * 1024; //  159 KB
   __attribute__((aligned(16))) uint8_t tensor_arena[kTensorArenaSize];
 }  // namespace
 

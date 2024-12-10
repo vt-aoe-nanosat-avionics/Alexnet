@@ -6,6 +6,7 @@
 #include <libopencm3/stm32/rcc.h>
 #include <libopencm3/stm32/quadspi.h>
 #include "ta-expt/IS25LP128F.h"
+#include "bootloader.h"
 
 #include "tflm_wrapper.h"
 #include "alexnet.h"
@@ -30,6 +31,8 @@ void init_alexnet_cnn(void) {
 
     ccr = quadspi_prepare_funcion_mode(ccr, QUADSPI_CCR_FMODE_IREAD);
     quadspi_write_ccr(ccr);
+    
+    init_flash_ext();
 }
 
 float* run_alexnet_cnn(void) {
@@ -64,6 +67,9 @@ float* run_alexnet_cnn(void) {
     
     ccr = quadspi_prepare_funcion_mode(ccr, QUADSPI_CCR_FMODE_IREAD);
     quadspi_write_ccr(ccr);
+
+    init_flash_ext();
+
 
     return output;
 }
