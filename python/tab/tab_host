@@ -1063,9 +1063,9 @@ class tabCommands(Cmd):
 
     labels = ['airplane', 'automobile', 'bird', 'cat', 'deer', 'dog', 'frog', 'horse', 'ship', 'truck']
 
-    #plt.imshow(x_test[file])
-    #plt.title(labels[y_test[file]])
-    #plt.show()#block=False)
+    plt.imshow(x_test[file])
+    plt.title(labels[y_test[file]])
+    plt.show(block=False)
 
     self.do_erase_sectors('0x00000000 1')
     self.do_write_file('cifarData 0x00000000')
