@@ -68,15 +68,7 @@ make -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET
 cd ..
 ```
 
-
-## 3. Compile Tensorflow Wrapper
-
-```bash
-arm-none-eabi-g++ -mcpu=cortex-m4 -mthumb -mfpu=fpv4-sp-d16 -mfloat-abi=hard -std=c++17 -Wall -Wextra -fno-threadsafe-statics -Itflite-micro/. -Itflite-micro/tensorflow/lite/micro/tools/make/downloads -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/gemmlowp -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/flatbuffers/include -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/kissfft -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/ruy -Itflite-micro/tensorflow/lite/micro/tools/make/downloads/cmsis/Cortex_DFP/Device/"ARMCM4"/Include -Itflite-micro/tensorflow/lite/micro -ltensorflow-microlite -c target_m4/tflm_wrapper.cc -o build/tflm_wrapper.o
-```
-
-
-## 4. Compile and link main C code
+## 3. Compile and link main C code
 
 ```bash
 make
