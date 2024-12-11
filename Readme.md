@@ -1,11 +1,25 @@
 
+# Dependencies
+
+- Makefile
+- Python
+- g++
+- GNU embedded toolchain
+
+
 # Setting Up Virtual Environment
 
 ```bash
 python3 -m venv venv
 source venv/bin/activate
 
-pip install requirements.txt
+pip install -r python/requirements.txt
+```
+
+# Initialize Submodules
+```bash
+git submodule init
+git submodule update
 ```
 
 # Compiling for Linux
@@ -50,7 +64,7 @@ cd ..
 
 ```bash
 cd tflite-micro
-make -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=cortex-m4+fp OPTIMIZED_KERNEL_DIR=cmsis_nn TARGET_TOOLCHAIN_ROOT=/usr/bin/ microlite
+make -f tensorflow/lite/micro/tools/make/Makefile TARGET=cortex_m_generic TARGET_ARCH=cortex-m4+fp OPTIMIZED_KERNEL_DIR=cmsis_nn BUILD_TYPE=no_tf_lite_static_memory microlite
 cd ..
 ```
 
