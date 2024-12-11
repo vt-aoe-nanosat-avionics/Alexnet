@@ -17,7 +17,7 @@ y_test = y_test.reshape(-1,)
 y_train = y_train.reshape(-1,)
 
 
-model = tf.keras.models.load_model("models/model.keras")
+model = tf.keras.models.load_model("models/model_7013.keras")
 
 #evaluaton = model.evaluate(x_test, y_test)
 

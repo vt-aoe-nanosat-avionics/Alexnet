@@ -18,15 +18,66 @@ y_train = y_train.reshape(-1,)
 print("Augmenting training data...")
 
 x_flipped = np.array([np.array(tf.image.flip_left_right(image)) for image in x_train.copy()])
-x_cropped = np.array([cv2.resize(np.array(tf.image.central_crop(image, 0.7)), (32,32)) for image in x_train.copy()])
-x_flipped_cropped = np.array([cv2.resize(np.array(tf.image.central_crop(image, 0.7)), (32,32)) for image in x_flipped.copy()])
+#x_gray = np.array([np.array(tf.image.rgb_to_grayscale(image)) for image in x_train.copy()])
+x_saturated = np.array([np.array(tf.image.adjust_saturation(image, 3)) for image in x_train.copy()])
+x_brightness = np.array([np.array(tf.image.adjust_brightness(image, 0.5)) for image in x_train.copy()])
+x_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_train.copy()])
+x_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_train.copy()])
+x_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_train.copy()])
 
-print(x_train.shape, x_flipped.shape, x_cropped.shape, x_flipped_cropped.shape)
+#x_flipped_gray = np.array([np.array(tf.image.rgb_to_grayscale(image)) for image in x_flipped.copy()])
+x_flipped_saturated = np.array([np.array(tf.image.adjust_saturation(image, 3)) for image in x_flipped.copy()])
+x_flipped_brightness = np.array([np.array(tf.image.adjust_brightness(image, 0.5)) for image in x_flipped.copy()])
+x_flipped_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_flipped.copy()])
+x_flipped_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_flipped.copy()])
+x_flipped_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_flipped.copy()])
 
-x_train = np.concatenate((x_train, x_flipped, x_cropped, x_flipped_cropped))
-y_train = np.concatenate((y_train, y_train, y_train, y_train))
+#x_gray_brightness = np.array([np.array(tf.image.adjust_brightness(image, 0.5)) for image in x_gray.copy()])
+#x_gray_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_gray.copy()])
+#x_gray_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_gray.copy()])
+#x_gray_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_gray.copy()])
 
+x_saturated_brightness = np.array([np.array(tf.image.adjust_brightness(image, 0.5)) for image in x_saturated.copy()])
+x_saturated_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_saturated.copy()])
+x_saturated_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_saturated.copy()])
+x_saturated_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_saturated.copy()])
 
+x_brightness_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_brightness.copy()])
+x_brightness_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_brightness.copy()])
+x_brightness_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_brightness.copy()])
+
+#x_flipped_gray_brightness = np.array([np.array(tf.image.adjust_brightness(image, 0.5)) for image in x_flipped_gray.copy()])
+#x_flipped_gray_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_flipped_gray.copy()])
+#x_flipped_gray_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_flipped_gray.copy()])
+#x_flipped_gray_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_flipped_gray.copy()])
+
+x_flipped_saturated_brightness = np.array([np.array(tf.image.adjust_brightness(image, 0.5)) for image in x_flipped_saturated.copy()])
+x_flipped_saturated_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_flipped_saturated.copy()])
+x_flipped_saturated_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_flipped_saturated.copy()])
+x_flipped_saturated_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_flipped_saturated.copy()])
+
+x_flipped_brightness_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_flipped_brightness.copy()])
+x_flipped_brightness_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_flipped_brightness.copy()])
+x_flipped_brightness_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_flipped_brightness.copy()])
+
+#x_gray_brightness_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_gray_brightness.copy()])
+#x_gray_brightness_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_gray_brightness.copy()])
+#x_gray_brightness_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_gray_brightness.copy()])
+
+x_saturated_brightness_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_saturated_brightness.copy()])
+x_saturated_brightness_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_saturated_brightness.copy()])
+x_saturated_brightness_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_saturated_brightness.copy()])
+
+#x_flipped_gray_brightness_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_flipped_gray_brightness.copy()])
+#x_flipped_gray_brightness_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_flipped_gray_brightness.copy()])
+#x_flipped_gray_brightness_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_flipped_gray_brightness.copy()])
+
+x_flipped_saturated_brightness_90deg = np.array([np.array(tf.image.rot90(image)) for image in x_flipped_saturated_brightness.copy()])
+x_flipped_saturated_brightness_180deg = np.array([np.array(tf.image.rot90(image, k=2)) for image in x_flipped_saturated_brightness.copy()])
+x_flipped_saturated_brightness_270deg = np.array([np.array(tf.image.rot90(image, k=3)) for image in x_flipped_saturated_brightness.copy()])
+
+x_train = np.concatenate((x_train, x_flipped, x_saturated, x_brightness, x_90deg, x_180deg, x_270deg, x_flipped_saturated, x_flipped_brightness, x_flipped_90deg, x_flipped_180deg, x_flipped_270deg, x_saturated_brightness, x_saturated_90deg, x_saturated_180deg, x_saturated_270deg, x_brightness_90deg, x_brightness_180deg, x_brightness_270deg, x_flipped_saturated_brightness, x_flipped_saturated_90deg, x_flipped_saturated_180deg, x_flipped_saturated_270deg, x_flipped_brightness_90deg, x_flipped_brightness_180deg, x_flipped_brightness_270deg, x_saturated_brightness_90deg, x_saturated_brightness_180deg, x_saturated_brightness_270deg, x_flipped_saturated_brightness_90deg, x_flipped_saturated_brightness_180deg, x_flipped_saturated_brightness_270deg))
+y_train = np.concatenate((y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train, y_train))
 
 
 classes = ['Airplane', 'Automobile', 'Bird', 'Cat', 'Deer', 'Dog', 'Frog', 'Horse', 'Ship', 'Truck']
@@ -60,7 +111,7 @@ model.summary()
 
 
 model.compile(loss='sparse_categorical_crossentropy',optimizer=tf.optimizers.SGD(learning_rate=0.003),metrics=['accuracy'])
-history=model.fit(x_train, y_train ,epochs=4, batch_size=128, validation_data=(x_test, y_test))
+history=model.fit(x_train, y_train ,epochs=50, batch_size=1024, validation_data=(x_test, y_test))
 
 
 fig, axs = plt.subplots(2, 1, figsize=(15,15))
